@@ -71,26 +71,13 @@ class Server {
           ServerEnvOptions.DEVELOPMENT,
         ].includes(config.NODE.ENV)
       ) {
-        if (!fs.existsSync(".logs/morgan")) {
-          fs.mkdirSync(".logs/morgan", { recursive: true });
+        if (!fs.existsSync("logs/morgan")) {
+          fs.mkdirSync("logs/morgan", { recursive: true });
         }
-
-        const createFileName = (time: Date, index: number) => {
-          if (!time) {
-            return `$current.log`;
-          }
-
-          let filename = time.toISOString().slice(0, 10);
-          if (index > 1) {
-            filename += `.${index}`;
-          }
-
-          return `${filename}.log`;
-        };
 
         this.app.use(
           morgan("combined", {
-            stream: fs.createWriteStream(".logs/morgan/requests.log", {
+            stream: fs.createWriteStream("logs/morgan/requests.log", {
               flags: "a",
             }),
           }),

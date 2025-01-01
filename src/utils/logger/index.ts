@@ -21,7 +21,7 @@ if (
         filename: "%DATE%.log",
         datePattern: "YYYY-MM-DD",
         zippedArchive: true,
-        dirname: ".logs/error",
+        dirname: "logs/error",
         maxSize: "20m",
         maxFiles: "15d",
       }),
@@ -31,8 +31,8 @@ if (
       format.timestamp(),
       format.printf(
         ({ timestamp, level, message }) =>
-          `{"time":"${timestamp}", "level":"${level}", "message": "${message}"}`
-      )
+          `{"time":"${timestamp}", "level":"${level}", "message": "${message}"}`,
+      ),
     ),
   });
 
@@ -42,7 +42,7 @@ if (
         filename: "%DATE%.log",
         datePattern: "YYYY-MM-DD",
         zippedArchive: true,
-        dirname: ".logs/requests",
+        dirname: "logs/requests",
         maxSize: "20m",
         maxFiles: "15d",
       }),
@@ -52,8 +52,8 @@ if (
       format.timestamp(),
       format.printf(
         ({ timestamp, level, message }) =>
-          `{"time":"${timestamp}", "level":"${level}", "message": "${message}"}`
-      )
+          `{"time":"${timestamp}", "level":"${level}", "message": "${message}"}`,
+      ),
     ),
   });
 }
