@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import { Server as HttpServer } from "http";
 import cors from "cors";
 import config from "./config";
+import db from "./db";
 
 class Server {
   public app: Application;
@@ -16,7 +17,7 @@ class Server {
       origin: config.ALLOWED_ORIGINS.split(","),
     };
 
-    // initialiseDB
+    this.initializeDB();
     // initialize systems middleare
     // initialize routes
     // initialize error handling
@@ -31,7 +32,9 @@ class Server {
     });
   }
 
-  private initializeDB(): void {}
+  private async initializeDB(): Promise<void> {
+    await db.connect();
+  }
 
   private routes(): void {}
 
