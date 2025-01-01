@@ -10,6 +10,7 @@ import morgan from "morgan";
 import fs from "fs";
 import * as rfs from "rotating-file-stream";
 import customMiddleware from "./middlewares/custom.middleware";
+import route from "./routes";
 
 class Server {
   public app: Application;
@@ -26,17 +27,17 @@ class Server {
 
     this.initializeDB();
     this.initializeSystemMiddlewares();
-    // initialize routes
+    this.routes();
     // initialize error handling
 
-    ["SIGINT", "SIGUSR1", "SIGUSR2", "SIGTERM"].forEach((signal) => {
-      process.on(signal, async (error) => {
-        config.DEBUG(
-          `\nReceived signal (${signal}) to terminate the application ${JSON.stringify(error)}`,
-        );
-        await this.shutDown();
-      });
-    });
+    // ["SIGINT", "SIGUSR1", "SIGUSR2", "SIGTERM"].forEach((signal) => {
+    //   process.on(signal, async (error) => {
+    //     config.DEBUG(
+    //       `\nReceived signal (${signal}) to terminate the application ${JSON.stringify(error)}`,
+    //     );
+    //     await this.shutDown();
+    //   });
+    // });
   }
 
   private initializeDB(): void {
@@ -89,7 +90,9 @@ class Server {
     this.app.use(customMiddleware.logger);
   }
 
-  private routes(): void {}
+  public routes(): void {
+    this.app.use(route);
+  }
 
   private errorHandlingMiddleware(): void {}
 

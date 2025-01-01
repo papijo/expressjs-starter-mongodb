@@ -10,6 +10,7 @@ class CustomMiddlewares {
       const logEntry = `method:${req.method}, endpoint:${req.url}, statusCode:${res.statusCode}, responseTime: ${duration}ms`;
       requestLogger.info(logEntry);
     });
+    next();
   }
 }
 
