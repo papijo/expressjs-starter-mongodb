@@ -3,6 +3,13 @@ import { Server as HttpServer } from "http";
 import cors from "cors";
 import config from "./config";
 import db from "./db";
+import compression from "compression";
+import { ServerEnvOptions } from "./enums/config.enum";
+import helmet from "helmet";
+import morgan from "morgan";
+import fs from "fs";
+import * as rfs from "rotating-file-stream";
+import customMiddleware from "./middlewares/custom.middleware";
 
 class Server {
   public app: Application;
@@ -18,7 +25,7 @@ class Server {
     };
 
     this.initializeDB();
-    // initialize systems middleare
+    this.initializeSystemMiddlewares();
     // initialize routes
     // initialize error handling
 
@@ -32,8 +39,67 @@ class Server {
     });
   }
 
-  private async initializeDB(): Promise<void> {
-    await db.connect();
+  private initializeDB(): void {
+    db.connect();
+  }
+
+  private initializeSystemMiddlewares(): void {
+    this.app.use(compression());
+
+    // Cors
+    if (config.NODE.ENV === ServerEnvOptions.PRODUCTION) {
+      this.app.use(cors(this.corsOptions));
+    } else {
+      this.app.use(cors());
+    }
+
+    // Parse JSON Request Body
+    this.app.use(express.json({ limit: "5mb" }));
+    // parse urlencoded request body
+    this.app.use(express.urlencoded({ limit: "5mb", extended: true }));
+    // Security Management Middleware (Headers)
+    this.app.use(helmet());
+
+    // Morgan Logging Middleware
+    if (config.NODE.ENV !== ServerEnvOptions.TESTING) {
+      this.app.use(morgan("dev"));
+
+      if (
+        [
+          ServerEnvOptions.STAGING,
+          ServerEnvOptions.PRODUCTION,
+          ServerEnvOptions.DEVELOPMENT,
+        ].includes(config.NODE.ENV)
+      ) {
+        if (!fs.existsSync(".logs/morgan")) {
+          fs.mkdirSync(".logs/morgan", { recursive: true });
+        }
+
+        const createFileName = (time: Date, index: number) => {
+          if (!time) {
+            return `$current.log`;
+          }
+
+          let filename = time.toISOString().slice(0, 10);
+          if (index > 1) {
+            filename += `.${index}`;
+          }
+
+          return `${filename}.log`;
+        };
+
+        this.app.use(
+          morgan("combined", {
+            stream: fs.createWriteStream(".logs/morgan/requests.log", {
+              flags: "a",
+            }),
+          }),
+        );
+      }
+    }
+
+    // Winston Logger Middleware
+    this.app.use(customMiddleware.logger);
   }
 
   private routes(): void {}
