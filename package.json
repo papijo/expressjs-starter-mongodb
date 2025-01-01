@@ -7,8 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .ts,.js",
     "format": "prettier --write .",
-    "prettier:check": "prettier --check .",
-    "prepare": "husky"
+    "prettier:check": "prettier --write .",
+    "prepare": "husky",
+    "dev": "cross-env DEBUG='dev,stag,prod' tsnd --respawn --files src/app.ts",
+    "build": "tsc -p .",
+    "start": "cross-env DEBUG='dev,stag,prod' node dist/app.js"
   },
   "author": "Ebhota Jonathan",
   "license": "ISC",
@@ -17,6 +20,7 @@
     "compression": "^1.7.5",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
+    "debug": "^4.4.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
