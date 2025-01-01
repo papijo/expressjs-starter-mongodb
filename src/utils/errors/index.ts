@@ -14,7 +14,7 @@ export class SystemError extends Error {
   constructor(
     code: number,
     message: string = "Sorry, something went wrong!",
-    errors?: Object
+    errors?: Object,
   ) {
     super(message); // 'Error' breaks prototype chain here
     this._code = code || 500;
