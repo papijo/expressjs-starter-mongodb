@@ -7,14 +7,16 @@ import compression from "compression";
 import { ServerEnvOptions } from "./enums/config.enum";
 import helmet from "helmet";
 import morgan from "morgan";
-import fs from "fs";
-import * as rfs from "rotating-file-stream";
 import customMiddleware from "./middlewares/custom.middleware";
 import route from "./routes";
 import errorMiddleware from "./middlewares/error.middleware";
 import i18nMiddleware from "i18next-http-middleware";
 import i18nConfigMiddleware from "./middlewares/i18nConfig.middleware";
 import cookieParser from "cookie-parser";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import mongoose from "mongoose";
+import fs from "fs";
 
 class Server {
   public app: Application;
@@ -49,10 +51,30 @@ class Server {
     db.connect();
   }
 
-  private async initializeSystemMiddlewares(): Promise<void> {
-    await i18nConfigMiddleware;
+  private initializeSystemMiddlewares(): void {
+    // Internationalization
+    i18nConfigMiddleware;
+
+    // Compression
     this.app.use(compression());
-    this.app.use(cookieParser());
+
+    // Cookie Parser
+    this.app.use(cookieParser("Secret"));
+
+    // Session
+    this.app.use(
+      session({
+        secret: "secret",
+        saveUninitialized: true,
+        resave: true,
+        cookie: {
+          maxAge: 60000 * 60,
+        },
+        store: MongoStore.create({
+          client: mongoose.connection.getClient(),
+        }),
+      }),
+    );
 
     // Cors
     if (config.NODE.ENV === ServerEnvOptions.PRODUCTION) {

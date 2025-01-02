@@ -18,7 +18,7 @@ class I18nConfigMiddleware {
       fallbackLng: "en", // Default language
       preload: ["en"], // Languages to preload
       detection: {
-        order: ["querystring", "header", "cookie"], // Language detection order
+        order: ["querystring", "cookie", , "header"], // Language detection order
         caches: ["cookie"], // Cache detected language in cookies
       },
     };

@@ -18,6 +18,7 @@ const envVarsSchema = Joi.object()
     MONGODB_URI: Joi.string().required(),
     DECRYPT_KEY: Joi.string().required(),
     ENCRYPT_KEY: Joi.string().required(),
+    SESSION_SECRET: Joi.string().required(),
   })
   .unknown();
 
@@ -45,6 +46,8 @@ class ServerConfig {
   public ALLOWED_ORIGINS = envVars.ALLOWED_ORIGINS;
 
   public MONGODB_URI = envVars.MONGODB_URI;
+
+  public SESSION_SECRET = envVars.SESSION_SECRET;
 
   // JWT Object
   public JWTKeys = {
