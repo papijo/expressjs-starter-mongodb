@@ -11,6 +11,7 @@ import fs from "fs";
 import * as rfs from "rotating-file-stream";
 import customMiddleware from "./middlewares/custom.middleware";
 import route from "./routes";
+import errorMiddleware from "./middlewares/error.middleware";
 
 class Server {
   public app: Application;
@@ -28,16 +29,16 @@ class Server {
     this.initializeDB();
     this.initializeSystemMiddlewares();
     this.routes();
-    // initialize error handling
+    this.errorHandlingMiddleware();
 
-    // ["SIGINT", "SIGUSR1", "SIGUSR2", "SIGTERM"].forEach((signal) => {
-    //   process.on(signal, async (error) => {
-    //     config.DEBUG(
-    //       `\nReceived signal (${signal}) to terminate the application ${JSON.stringify(error)}`,
-    //     );
-    //     await this.shutDown();
-    //   });
-    // });
+    ["SIGINT", "SIGUSR1", "SIGUSR2", "SIGTERM"].forEach((signal) => {
+      process.on(signal, async (error) => {
+        config.DEBUG(
+          `\nReceived signal (${signal}) to terminate the application ${JSON.stringify(error)}`,
+        );
+        await this.shutDown();
+      });
+    });
   }
 
   private initializeDB(): void {
@@ -94,7 +95,9 @@ class Server {
     this.app.use(route);
   }
 
-  private errorHandlingMiddleware(): void {}
+  private errorHandlingMiddleware(): void {
+    this.app.use(errorMiddleware.errorHandler);
+  }
 
   public start(): void {
     // Start express server

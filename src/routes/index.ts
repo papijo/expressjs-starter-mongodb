@@ -10,9 +10,7 @@ class Routes {
   }
 
   routes(): void {
-    console.log("Test route module");
     this.router.get("/", (req: Request, res: Response) => {
-      console.log("Test Endpoint");
       const data: object = {
         owner: "Ebhota Jonathan",
         developer: "Ebhota Jonathan",
