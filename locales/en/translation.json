@@ -1,0 +1,8 @@
+{
+  "errors": {
+    "routeNotFound": "API Endpoint does not exist or is currently in construction"
+  },
+  "messages": {
+    "home": "NodeJs/ExpressJS with MongoDB Template Home"
+  }
+}

@@ -12,6 +12,9 @@ import * as rfs from "rotating-file-stream";
 import customMiddleware from "./middlewares/custom.middleware";
 import route from "./routes";
 import errorMiddleware from "./middlewares/error.middleware";
+import i18nMiddleware from "i18next-http-middleware";
+import i18nConfigMiddleware from "./middlewares/i18nConfig.middleware";
+import cookieParser from "cookie-parser";
 
 class Server {
   public app: Application;
@@ -28,6 +31,7 @@ class Server {
 
     this.initializeDB();
     this.initializeSystemMiddlewares();
+    this.initilizeLanguageDetector();
     this.routes();
     this.errorHandlingMiddleware();
 
@@ -45,8 +49,10 @@ class Server {
     db.connect();
   }
 
-  private initializeSystemMiddlewares(): void {
+  private async initializeSystemMiddlewares(): Promise<void> {
+    await i18nConfigMiddleware;
     this.app.use(compression());
+    this.app.use(cookieParser());
 
     // Cors
     if (config.NODE.ENV === ServerEnvOptions.PRODUCTION) {
@@ -89,6 +95,10 @@ class Server {
 
     // Winston Logger Middleware
     this.app.use(customMiddleware.logger);
+  }
+
+  private initilizeLanguageDetector(): void {
+    this.app.use(i18nMiddleware.handle(i18nConfigMiddleware));
   }
 
   public routes(): void {

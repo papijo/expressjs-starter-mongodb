@@ -22,16 +22,14 @@ class Routes {
       return apiResponse.successResponse(
         res,
         200,
-        "NodeJs/ExpressJS with MongoDB Template Home",
+        req.t("messages.home"),
         data,
       );
     });
 
     // Error route
-    this.router.use("*", () => {
-      throw new NotFoundError(
-        "API Endpoint does not exist or is currently in construction",
-      );
+    this.router.use("*", (req: Request) => {
+      throw new NotFoundError(req.t("errors.routeNotFound"));
     });
   }
 }
