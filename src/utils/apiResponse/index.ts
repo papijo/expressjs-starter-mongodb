@@ -22,12 +22,13 @@ class ResponseUtil {
   public errorResponse(
     res: Response,
     statusCode: number,
+    name: string,
     message: string,
     data?: object,
     error: boolean = true,
   ): Response {
     message = message.endsWith(".") ? message : `${message}.`;
-    return res.status(statusCode).json({ message, data, error });
+    return res.status(statusCode).json({ name, message, data, error });
   }
 }
 

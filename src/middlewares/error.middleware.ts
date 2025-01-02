@@ -31,6 +31,7 @@ class ErrorMiddleware {
       errorLogger.error({
         ip,
         errorCode,
+        name: error.name,
         message: error.message,
         method,
         timeStamp: new Date(),
@@ -42,6 +43,7 @@ class ErrorMiddleware {
       return apiResponse.errorResponse(
         res,
         500,
+        error.name,
         "An unexpected error occurred. Please try again later.",
       );
     }
@@ -51,7 +53,13 @@ class ErrorMiddleware {
       ...(!isProduction && { trace: errorMessage, method, path }),
     };
 
-    return apiResponse.errorResponse(res, errorCode, error.message, errors);
+    return apiResponse.errorResponse(
+      res,
+      errorCode,
+      error.name,
+      error.message,
+      errors,
+    );
   }
 }
 

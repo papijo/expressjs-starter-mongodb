@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import apiResponse from "../utils/apiResponse";
+import { NotFoundError } from "../utils/errors";
 
 class Routes {
   public router: Router;
@@ -27,8 +28,10 @@ class Routes {
     });
 
     // Error route
-    this.router.use("*", (req, res) => {
-      res.json("No route here");
+    this.router.use("*", () => {
+      throw new NotFoundError(
+        "API Endpoint does not exist or is currently in construction",
+      );
     });
   }
 }
